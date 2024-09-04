@@ -46,11 +46,11 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
-# Load datasets
+### Load datasets
 train_df = pd.read_csv('train.csv')
 test_df = pd.read_csv('test.csv')
 
-# Encoding categorical features
+### Encoding categorical features
 label_encoders = {}
 for column in train_df.columns:
     if train_df[column].dtype == 'object' and column != 'class':
@@ -58,11 +58,11 @@ for column in train_df.columns:
         train_df[column] = le.fit_transform(train_df[column].astype(str))
         label_encoders[column] = le
 
-# Encode the target variable
+### Encode the target variable
 le_target = LabelEncoder()
 train_df['class'] = le_target.fit_transform(train_df['class'])
 
-# Data preprocessing
+### Data preprocessing
 train_df_temp = train_df.copy()
 mean_imputer = SimpleImputer(strategy='mean')
 knn_imputer = KNNImputer(n_neighbors=5)
@@ -70,16 +70,16 @@ train_df_temp['stem-width'] = knn_imputer.fit_transform(train_df_temp[['stem-wid
 train_df_temp['cap-diameter'] = mean_imputer.fit_transform(train_df_temp[['cap-diameter']])
 train_df_temp.drop(columns=['id', 'stem-root', 'veil-type', 'spore-print-color', 'gill-spacing'], inplace=True)
 
-# Splitting the data
+### Splitting the data
 X = train_df_temp.drop(columns=['class'])
 y = train_df_temp['class']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Training the model
+### Training the model
 model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X_train, y_train)
 
-# Predicting and evaluating
+### Predicting and evaluating
 y_pred = model.predict(X_test)
 print("Accuracy:", accuracy_score(y_test, y_pred))
 ## Acknowledgments
